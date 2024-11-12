@@ -34,14 +34,14 @@ public:
 		return true; // Successfully added component
 	}
 	template <typename T>
-	T GetComponent(const std::vector<std::pair<std::string, T>>& componentArr, const std::string& ID) {
+	Component* GetComponent(const std::string& ID) {
 		for (const auto& pair : componentArr) {
 			if (pair.first == ID) {
-				return pair.second;
+				return pair.second.get();
 			}
 		}
 		std::cout << "Component not in array" << std::endl;
-		return T();  // Return a default-constructed T if not found
+		return nullptr; 
 	}
 
 	template<typename T>
