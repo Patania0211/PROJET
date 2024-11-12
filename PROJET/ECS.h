@@ -4,73 +4,59 @@
 #include <vector>
 #include <algorithm>
 
+#include "ECS.h"
+#include "components.h"
 
 #define MAX_ENTITIES 700
 
 class Entity 
 {
 public:
-
-	Entity() = default;
-
-private:
-
-	
+	virtual ~Entity() = default;
 };
-class Component 
-{
-	Component(std::string ID) 
-	{
-		
-	}
-};
-//template<typename T>
+template<typename T>
 class ComponentManager 
 {
 public:
 
 	template <typename T>
-	void AddComponent(std::unordered_map<std::string, T>& componentArr, const T& component, const std::string& ID)
-	{
-		// Check if the component already exists in the array
-		if (componentArr.find(ID) != componentArr.end())
-		{
-			std::cout << "Component already in array" << std::endl;
-			return;
+	bool AddComponent(const T& component, const std::string& ID) {
+		// Check if the component with the given ID already exists
+		for (const auto& pair : componentArr) {
+			if (pair.first == ID) {
+				std::cout << "Component with ID: " << ID << " already exists." << std::endl;
+				return false;
+			}
 		}
-
-		// Add the component to the map
-		componentArr.emplace(ID, component);
+		// If ID does not exist, add the new component
+		componentArr.emplace_back(ID, std::make_unique<T>(component));
 		std::cout << "Component added with ID: " << ID << std::endl;
+		return true; // Successfully added component
 	}
 	template <typename T>
-	T GetComponent(std::unordered_map<std::string, T>& componentArr, const std::string& ID)
-	{
-		// Check if the component exists in the map
-		auto it = componentArr.find(ID);
-		if (it == componentArr.end())
-		{
-			std::cout << "Component not in array" << std::endl;
-			return T();  // Return a default-constructed T if not found
+	T GetComponent(const std::vector<std::pair<std::string, T>>& componentArr, const std::string& ID) {
+		for (const auto& pair : componentArr) {
+			if (pair.first == ID) {
+				return pair.second;
+			}
 		}
+		std::cout << "Component not in array" << std::endl;
+		return T();  // Return a default-constructed T if not found
+	}
 
-		// Return the component
-		return it->second;
-	}
 	template<typename T>
-	void DeleteComponent(std::unordered_map<std::string, T>& componentArr, const std::string& ID)
-	{
-		// Check if the component exists in the array
-		auto it = componentArr.find(ID);
-		if (it != componentArr.end())
-		{
-			// Remove the component
-			componentArr.erase(it);
-			std::cout << "Component with ID: " << ID << " has been deleted." << std::endl;
+	bool DeleteComponent(std::vector<std::pair<std::string, T>>& componentArr, const std::string& ID) {
+		for (auto it = componentArr.begin(); it != componentArr.end(); ++it) {
+			if (it->first == ID) {
+				componentArr.erase(it);
+				std::cout << "Component with ID: " << ID << " deleted." << std::endl;
+				return true; // Successfully deleted component
+			}
 		}
-		else
-		{
-			std::cout << "Component with ID: " << ID << " not found." << std::endl;
-		}
+		std::cout << "Component with ID: " << ID << " not found." << std::endl;
+		return false; // Failed to delete component
 	}
+
+private:
+	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
 };

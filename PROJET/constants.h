@@ -1,0 +1,7 @@
+#pragma once
+#define PADDLE_DEFAULT_VELOCITY 10
+#define WINDOW_WIDTH 600
+#define WINDOW_HEIGHT 800
+
+
+

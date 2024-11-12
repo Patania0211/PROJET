@@ -1,15 +1,35 @@
-#include "main.h"
 #include "ECS.h"
+#include <SFML/Graphics.hpp>
 #include <vector>
 
-struct Potato{
-	int a;
-};
-struct Tubercule {
-	int b;
-};
+#include "casseBrique.h"
+
 int main() 
 {
-	
+
+
+    Paddle paddle;
+    //paddle.Init(components);
+
+    //ComponentManager test;
+
+
+    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+    sf::CircleShape shape(100.f);
+    shape.setFillColor(sf::Color::Green);
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        window.clear();
+        window.draw(shape);
+        window.display();
+    }
 	return 0;
 }
