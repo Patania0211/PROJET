@@ -15,10 +15,13 @@ public:
 
 	Paddle()
 	{
-		paddleComponent.AddComponent(Velocity{ 10.f, .0f }, "Velocity");	
+		paddleComponent.AddComponent(Velocity{ 10.f, .0f }, "Velocity");
+
 		paddleComponent.AddComponent(Position{ WINDOW_WIDTH / 2 , 12.f}, "Position");
 
 		Component* component = paddleComponent.GetComponent<Position>("Position");
+
+		paddleComponent.DeleteComponent<Position>("Position");
 	}
 private:
 	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;

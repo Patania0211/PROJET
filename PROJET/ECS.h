@@ -20,10 +20,13 @@ class ComponentManager
 public:
 
 	template <typename T>
-	bool AddComponent(const T& component, const std::string& ID) {
+	bool AddComponent(const T& component, const std::string& ID)
+	{
 		// Check if the component with the given ID already exists
-		for (const auto& pair : componentArr) {
-			if (pair.first == ID) {
+		for (const auto& pair : componentArr) 
+		{
+			if (pair.first == ID)
+			{
 				std::cout << "Component with ID: " << ID << " already exists." << std::endl;
 				return false;
 			}
@@ -34,9 +37,12 @@ public:
 		return true; // Successfully added component
 	}
 	template <typename T>
-	Component* GetComponent(const std::string& ID) {
-		for (const auto& pair : componentArr) {
-			if (pair.first == ID) {
+	Component* GetComponent(const std::string& ID) 
+	{
+		for (const auto& pair : componentArr)
+		{
+			if (pair.first == ID)
+			{
 				return pair.second.get();
 			}
 		}
@@ -45,16 +51,21 @@ public:
 	}
 
 	template<typename T>
-	bool DeleteComponent(std::vector<std::pair<std::string, T>>& componentArr, const std::string& ID) {
-		for (auto it = componentArr.begin(); it != componentArr.end(); ++it) {
-			if (it->first == ID) {
+	bool DeleteComponent(const std::string& ID) 
+	{
+		// Iterate through the vector to find the component with the given ID
+		for (auto it = componentArr.begin(); it != componentArr.end(); ++it) 
+		{
+			if (it->first == ID) 
+			{
+				// Erase the component from the vector
 				componentArr.erase(it);
 				std::cout << "Component with ID: " << ID << " deleted." << std::endl;
 				return true; // Successfully deleted component
 			}
 		}
 		std::cout << "Component with ID: " << ID << " not found." << std::endl;
-		return false; // Failed to delete component
+		return false; // Component not found in the array
 	}
 
 private:
