@@ -1,5 +1,8 @@
 #pragma once
 #include <iostream>
+#include <SFML/Graphics.hpp>
+
+#include "constants.h"
 
 class Component {
 public:
@@ -17,6 +20,8 @@ public:
     void Print() const override {
         std::cout << "Velocity: (" << dx << ", " << dy << ")\n";
     }
+
+
 };
 
 class Position : public Component {
@@ -29,6 +34,16 @@ public:
     void Print() const override {
         std::cout << "Position: (" << x << ", " << y << ")\n";
     }
+
+    //void Clamp(bool xDir, int x) 
+    //{
+    //    if (x > WINDOW_WIDTH - PADDING) 
+    //    {
+    //        xDir = false;
+    //        return;
+    //    }
+    //}
+
 };
 
 class Size : public Component {

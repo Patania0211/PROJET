@@ -13,7 +13,7 @@ int main()
 
     //ComponentManager test;
 
-
+    paddle.Init();
     sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT,WINDOW_WIDTH), "Casse Brique");
 
     while (window.isOpen())
@@ -25,6 +25,7 @@ int main()
                 window.close();
         }
 
+        paddle.Move(sf::Keyboard::isKeyPressed(sf::Keyboard::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Q));
         window.clear();
         paddle.Draw(window);
         //window.draw(shape);
