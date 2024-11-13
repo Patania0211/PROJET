@@ -14,9 +14,7 @@ int main()
     //ComponentManager test;
 
 
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT,WINDOW_WIDTH), "Casse Brique");
 
     while (window.isOpen())
     {
@@ -28,7 +26,8 @@ int main()
         }
 
         window.clear();
-        window.draw(shape);
+        paddle.Draw(window);
+        //window.draw(shape);
         window.display();
     }
 	return 0;
