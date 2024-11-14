@@ -35,9 +35,6 @@
     <ClCompile Include="ECS.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="components.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="casseBrique.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>

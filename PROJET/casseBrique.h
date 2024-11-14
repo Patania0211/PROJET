@@ -29,8 +29,10 @@ public:
 	void Init();
 	void Draw(sf::RenderWindow& window);
 	void Move(int xDir);
-	void BorderCollision();
-	void Collision();
+
+	sf::RectangleShape GetRect();
+	sf::FloatRect GetCollider();
+
 private:
 
 	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
@@ -39,6 +41,9 @@ private:
 	Size* paddleSize;
 	Velocity* paddleVelocity;
 	Position* paddlePosition;
+
+	sf::RectangleShape paddle;
+	sf::FloatRect collider;
 };
 
 
@@ -56,12 +61,25 @@ public:
 		ballComponent.AddComponent(Size{ BALL_RADIUS,BALL_RADIUS }, "Size");
 	}
 
+
 	void Init();
+
+	void Move(float deltaTime);
+
+	void Update(float deltaTime, Paddle& paddle);
+
+	sf::CircleShape GetCircle();
+	void Draw(sf::RenderWindow& window);
+
+	void HandleCollisions(Paddle& paddle);
 
 
 private:
-	
+	//sf::CircleShape ball;
+
 	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
+	
+	sf::FloatRect collider;
 
 
 	Size* ballSize;

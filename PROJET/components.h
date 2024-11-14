@@ -19,9 +19,15 @@ public:
     // Implement Print function for Velocity
     void Print() const override {
         std::cout << "Velocity: (" << dx << ", " << dy << ")\n";
+
+
     }
 
-
+    void Invert(float& dx, float& dy)
+    {
+        dy *= -1;
+        dx *= -1;
+    }
 };
 
 class Position : public Component {
@@ -35,18 +41,46 @@ public:
         std::cout << "Position: (" << x << ", " << y << ")\n";
     }
 
-    //void Clamp(bool xDir, int x) 
-    //{
-    //    if (x > WINDOW_WIDTH - PADDING) 
-    //    {
-    //        xDir = false;
-    //        return;
-    //    }
-    //}
+    void BorderCollision(float &dx, float &dy, float padding)
+    {
+        if (x + padding >= WINDOW_WIDTH)
+        {
+            x = WINDOW_WIDTH - padding;
+            dy *= -1;
+            dx *= -1;
+        }
+        else if (x - padding <= 0)
+        {
+            x = padding;
+            dy *= -1;
+            dx *= -1;
+        }
 
+        if (y + padding >= WINDOW_HEIGHT)  // Object reached the bottom
+        {
+            y = WINDOW_HEIGHT - padding;  // Set position to just above the boundary
+            dy *= -1;
+            dx *= -1;
+        }
+        else if (y - padding <= 0)  // Object reached the top
+        {
+            y = padding;  // Set position to just below the boundary
+            dy *= -1;
+            dx *= -1;
+        }
+    }
+
+    bool DetectCollisions(sf::FloatRect selfCollider, sf::FloatRect otherCollider) 
+    {
+        if (selfCollider.intersects(otherCollider))
+        {
+            return true;
+        }
+    }
 };
 
-class Size : public Component {
+class Size : public Component 
+{
 public:
     float width, height;
 

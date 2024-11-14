@@ -140,7 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="casseBrique.cpp" />
-    <ClCompile Include="components.cpp" />
     <ClCompile Include="ECS.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

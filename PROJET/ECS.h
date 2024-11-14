@@ -4,16 +4,18 @@
 #include <vector>
 #include <algorithm>
 
-#include "ECS.h"
 #include "components.h"
 
-#define MAX_ENTITIES 700
 
 class Entity 
 {
 public:
+	Entity() = default;
 	virtual ~Entity() = default;
+
 };
+
+
 template<typename T>
 class ComponentManager 
 {
