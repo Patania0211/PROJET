@@ -30,15 +30,10 @@ int main()
                 window.close();
         }
 
-        ball.Update(deltaTime, paddle);
-        //ball.Move(deltaTime);
-        //ball.HandleCollisions(paddle);
-
-        paddle.Move(sf::Keyboard::isKeyPressed(sf::Keyboard::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Q));
-        
         window.clear();
-        ball.Draw(window);
-        paddle.Draw(window);
+        //ball.Draw(window);
+        paddle.Update(window, sf::Keyboard::isKeyPressed(sf::Keyboard::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Q));
+        ball.Update(deltaTime, paddle, window);
 
         //window.draw(shape);
         window.display();

@@ -21,26 +21,28 @@ public:
 
 		paddleComponent.AddComponent(Size{ PADDLE_WIDTH,PADDLE_HEIGHT }, "Size");
 
-		/*Component* component = paddleComponent.GetComponent<Position>("Position");
+		paddleComponent.AddComponent(Drawable{ isDrawn }, "Drawable");
 
-		paddleComponent.DeleteComponent<Position>("Position");*/
 	}
 
 	void Init();
-	void Draw(sf::RenderWindow& window);
+	void Update(sf::RenderWindow& window, int xDir);
 	void Move(int xDir);
 
 	sf::RectangleShape GetRect();
 	sf::FloatRect GetCollider();
+	float GetX();
+	float GetY();
 
 private:
 
 	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
-	
+	bool isDrawn;
 
 	Size* paddleSize;
 	Velocity* paddleVelocity;
 	Position* paddlePosition;
+	Drawable* paddleDrawing;
 
 	sf::RectangleShape paddle;
 	sf::FloatRect collider;
@@ -59,6 +61,8 @@ public:
 		ballComponent.AddComponent(Position{ BALL_DEFAULT_X , BALL_DEFAULT_Y }, "Position");
 
 		ballComponent.AddComponent(Size{ BALL_RADIUS,BALL_RADIUS }, "Size");
+
+		ballComponent.AddComponent(Drawable{isDrawn}, "Drawable");
 	}
 
 
@@ -66,24 +70,21 @@ public:
 
 	void Move(float deltaTime);
 
-	void Update(float deltaTime, Paddle& paddle);
-
-	sf::CircleShape GetCircle();
-	void Draw(sf::RenderWindow& window);
+	void Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window);
 
 	void HandleCollisions(Paddle& paddle);
 
 
 private:
 	//sf::CircleShape ball;
-
+	bool isDrawn;
 	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
 	
-	sf::FloatRect collider;
-
+	sf::FloatRect ballBounds;
+	sf::CircleShape ball;
 
 	Size* ballSize;
 	Velocity* ballVelocity;
 	Position* ballPosition;
-
+	Drawable* ballDrawing;
 };

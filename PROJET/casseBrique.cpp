@@ -13,6 +13,9 @@ void Paddle::Init()
 	Component* paddleVelocityBase = paddleComponent.GetComponent<Velocity>("Velocity");
 	paddleVelocity = dynamic_cast<Velocity*>(paddleVelocityBase);
 
+	Component* paddleDrawingBase = paddleComponent.GetComponent<Drawable>("Drawable");
+	paddleDrawing = dynamic_cast<Drawable*>(paddleDrawingBase);
+
 	if (!paddleSize)
 	{
 		std::cout << "NO paddle size component" << std::endl;
@@ -31,22 +34,18 @@ void Paddle::Init()
 		return;
 	}
 
-	
+	if (!paddleDrawing) 
+	{
+		std::cout << "NO paddle drawable component" << std::endl;
+		return;
+	}
+	paddleDrawing->isDrawn = true;
 };
-void Paddle::Draw(sf::RenderWindow& window)
+void Paddle::Update(sf::RenderWindow& window, int xDir)
 {
-
 	paddle = GetRect();
-
-	paddle.setPosition(sf::Vector2f(paddlePosition->x, paddlePosition->y));
-
-	paddle.setFillColor(sf::Color::Blue);
-
-	collider = paddle.getGlobalBounds();
-
-
-	window.draw(paddle);
-
+	Move(xDir);
+	paddleDrawing->Draw(paddle, paddlePosition->x, paddlePosition->y, sf::Color::Yellow, window);
 	return;
 }
 
@@ -54,7 +53,7 @@ void Paddle::Move(int xDir)
 {
 	paddlePosition->x += xDir * DEFAULT_VELOCITY_CLAMP ;
 
-	paddlePosition->BorderCollision(paddleVelocity->dx, paddleVelocity->dy, PADDING);
+	paddlePosition->RectCollisions(paddleVelocity->dx, paddleVelocity->dy, PADDING);
 	return;
 }
 
@@ -68,6 +67,14 @@ sf::FloatRect Paddle::GetCollider()
 	return sf::FloatRect(paddle.getGlobalBounds());
 }
 
+float Paddle::GetX()
+{
+	return paddlePosition->x;
+}
+float Paddle::GetY()
+{
+	return paddlePosition->y;
+}
 
 
 
@@ -86,68 +93,73 @@ void Ball::Init()
 	Component* ballVelocityBase = ballComponent.GetComponent<Velocity>("Velocity");
 	ballVelocity = dynamic_cast<Velocity*>(ballVelocityBase);
 
+	Component* ballDrawingBase = ballComponent.GetComponent<Drawable>("Drawable");
+	ballDrawing = dynamic_cast<Drawable*>(ballDrawingBase);
+
+
 	if (!ballSize)
 	{
-		std::cout << "NO paddle size component" << std::endl;
+		std::cout << "NO ball size component" << std::endl;
 		return;
 	}
 
 	if (!ballPosition)
 	{
-		std::cout << "NO paddle position component" << std::endl;
+		std::cout << "NO ball position component" << std::endl;
 		return;
 	}
 
 	if (!ballVelocity)
 	{
-		std::cout << "NO paddle velocity component" << std::endl;
+		std::cout << "NO ball velocity component" << std::endl;
 		return;
 	}
+
+	if (!ballDrawing)
+	{
+		std::cout << "NO ball drawable component" << std::endl;
+		return;
+	}
+
+	ballDrawing->isDrawn = true;
+	ball.setRadius(BALL_RADIUS);
+
 }
 
 void Ball::Move(float deltaTime)
 {
 	ballPosition->x += ballVelocity->dx * deltaTime;
 	ballPosition->y += ballVelocity->dy * deltaTime;
-
-
 }
 
-void Ball::Update(float deltaTime, Paddle& paddle)
+void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window)
 {
+
 	Move(deltaTime);
-	ballPosition->BorderCollision(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS);
-	HandleCollisions(paddle);
+	ballPosition->RectCollisions(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS);
+	ballDrawing->Draw(ball, ballPosition->x, ballPosition->y, sf::Color::Magenta, window);
+
+
+	ballPosition->Print();
+	//HandleCollisions(paddle);
+
+	ballBounds = ball.getGlobalBounds();
+
+	return;
+
 }
 
 sf::CircleShape GetCircle() 
 {
 	return sf::CircleShape (BALL_RADIUS);
 }
-void Ball::Draw(sf::RenderWindow& window)
-{
-
-	sf::CircleShape ball(BALL_RADIUS);
-
-	ball.setOrigin(BALL_RADIUS / 2, BALL_RADIUS / 2);
-
-	ball.setPosition(sf::Vector2f(ballPosition->x, ballPosition->y));
-
-	ball.setFillColor(sf::Color::Magenta);
-
-	collider = ball.getGlobalBounds();
-
-	window.draw(ball);
-
-	return;
-}
 
 void Ball::HandleCollisions(Paddle& paddle) 
 {
-	if (ballPosition->DetectCollisions(collider, paddle.GetCollider()))
-	{
-		ballVelocity->Invert(ballVelocity->dx, ballVelocity->dy);
 
-	}
+	//if (ballPosition->DetectCollisions(collider, paddle.GetCollider()))
+	//{
+	//	ballVelocity->dx, ballVelocity->dy += 1;
+	//}
 }
 

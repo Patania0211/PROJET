@@ -17,13 +17,13 @@ public:
     Velocity(float dx, float dy) : dx(dx), dy(dy) {}
 
     // Implement Print function for Velocity
-    void Print() const override {
+    void Print() const override 
+    {
         std::cout << "Velocity: (" << dx << ", " << dy << ")\n";
-
 
     }
 
-    void Invert(float& dx, float& dy)
+    void Invert(float& dx, float dy)
     {
         dy *= -1;
         dx *= -1;
@@ -37,45 +37,40 @@ public:
     Position(float x, float y) : x(x), y(y) {}
 
     // Implement Print function for Position
-    void Print() const override {
+    void Print() const override 
+    {
         std::cout << "Position: (" << x << ", " << y << ")\n";
     }
 
-    void BorderCollision(float &dx, float &dy, float padding)
+    void RectCollisions(float &dx, float &dy, float padding)
     {
+
         if (x + padding >= WINDOW_WIDTH)
         {
             x = WINDOW_WIDTH - padding;
-            dy *= -1;
             dx *= -1;
         }
         else if (x - padding <= 0)
         {
             x = padding;
-            dy *= -1;
             dx *= -1;
         }
 
-        if (y + padding >= WINDOW_HEIGHT)  // Object reached the bottom
+        if (y + padding >= WINDOW_HEIGHT)
         {
-            y = WINDOW_HEIGHT - padding;  // Set position to just above the boundary
+            y = WINDOW_HEIGHT - padding;
             dy *= -1;
-            dx *= -1;
         }
-        else if (y - padding <= 0)  // Object reached the top
+        else if (y - padding <= 0) 
         {
-            y = padding;  // Set position to just below the boundary
+            y = padding;
             dy *= -1;
-            dx *= -1;
         }
     }
 
     bool DetectCollisions(sf::FloatRect selfCollider, sf::FloatRect otherCollider) 
     {
-        if (selfCollider.intersects(otherCollider))
-        {
-            return true;
-        }
+          return selfCollider.intersects(otherCollider);
     }
 };
 
@@ -87,7 +82,35 @@ public:
     Size(float width, float height) : width(width), height(height) {}
 
     // Implement Print function for Size
-    void Print() const override {
+    void Print() const override 
+    {
         std::cout << "Size: (" << width << ", " << height << ")\n";
+    }
+};
+
+class Drawable : public Component 
+{
+public:
+
+    bool isDrawn;
+
+    Drawable(bool isDrawn) : isDrawn(isDrawn) {};
+
+    void Draw(sf::Shape& shape, float x, float y,sf::Color color, sf::RenderWindow& window) 
+    {
+        if (!isDrawn) 
+        {
+            return;
+        }
+        shape.setPosition(sf::Vector2f(x,y));
+        shape.setFillColor(color);
+
+        window.draw(shape);
+    }
+
+    void Print() const override 
+    {
+        std::cout << "Drawable: (" << isDrawn << ")\n";
+
     }
 };
