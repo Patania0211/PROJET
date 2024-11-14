@@ -43,17 +43,27 @@ void Paddle::Init()
 };
 void Paddle::Update(sf::RenderWindow& window, int xDir)
 {
-	paddle = GetRect();
 	Move(xDir);
+
+	paddlePosition->RectCollisions(paddleVelocity->dx, paddleVelocity->dy, PADDING);
+
+	paddle = GetRect();
 	paddleDrawing->Draw(paddle, paddlePosition->x, paddlePosition->y, sf::Color::Yellow, window);
+
+	ClampRight();
 	return;
 }
-
+void Paddle::ClampRight() 
+{
+	if (paddlePosition->x + paddleSize->width >= WINDOW_WIDTH - PADDING) {
+		paddlePosition->x = WINDOW_WIDTH - paddleSize->width - PADDING;
+		paddleVelocity->dx = 0;
+	}
+}
 void Paddle::Move(int xDir) 
 {
 	paddlePosition->x += xDir * DEFAULT_VELOCITY_CLAMP ;
 
-	paddlePosition->RectCollisions(paddleVelocity->dx, paddleVelocity->dy, PADDING);
 	return;
 }
 
@@ -65,15 +75,6 @@ sf::RectangleShape Paddle::GetRect()
 sf::FloatRect Paddle::GetCollider()
 {
 	return sf::FloatRect(paddle.getGlobalBounds());
-}
-
-float Paddle::GetX()
-{
-	return paddlePosition->x;
-}
-float Paddle::GetY()
-{
-	return paddlePosition->y;
 }
 
 
@@ -122,6 +123,9 @@ void Ball::Init()
 	}
 
 	ballDrawing->isDrawn = true;
+
+	ball.setOrigin(sf::Vector2f(BALL_RADIUS / 2, BALL_RADIUS / 2));
+
 	ball.setRadius(BALL_RADIUS);
 
 }
@@ -136,30 +140,48 @@ void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window)
 {
 
 	Move(deltaTime);
-	ballPosition->RectCollisions(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS);
+	ballPosition->RectCollisions(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS/2);
 	ballDrawing->Draw(ball, ballPosition->x, ballPosition->y, sf::Color::Magenta, window);
 
 
-	ballPosition->Print();
-	//HandleCollisions(paddle);
+	//ballPosition->Print();
+	Bounce(paddle.GetCollider());
 
 	ballBounds = ball.getGlobalBounds();
-
 	return;
 
 }
 
-sf::CircleShape GetCircle() 
-{
-	return sf::CircleShape (BALL_RADIUS);
-}
-
-void Ball::HandleCollisions(Paddle& paddle) 
+void Ball::Bounce(sf::FloatRect paddleBounds) 
 {
 
-	//if (ballPosition->DetectCollisions(collider, paddle.GetCollider()))
-	//{
-	//	ballVelocity->dx, ballVelocity->dy += 1;
-	//}
+	sf::FloatRect ballBounds(ballPosition->x, ballPosition->y, BALL_RADIUS * 2, BALL_RADIUS * 2);
+
+	if (ballBounds.intersects(paddleBounds)) 
+	{
+
+		if (ballBounds.top + ballBounds.height <= paddleBounds.top + 10) 
+		{ 
+			ballVelocity->dy = -abs(ballVelocity->dy);
+		}
+		// If the ball hits the bottom part of the paddle (y-axis)
+		else if (ballBounds.top >= paddleBounds.top + paddleBounds.height - 10) 
+		{
+			ballVelocity->dy = abs(ballVelocity->dy);
+		}
+
+		else 
+		{
+			if (ballVelocity->dx > 0) 
+			{
+				ballVelocity->dx = -abs(ballVelocity->dx);
+			}
+			else 
+			{
+				ballVelocity->dx = abs(ballVelocity->dx);
+			}
+		}
+	}
 }
+
 

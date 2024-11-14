@@ -17,7 +17,7 @@ int main()
     paddle.Init();
     ball.Init();
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT,WINDOW_WIDTH), "Casse Brique");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT), "Casse Brique");
 
     while (window.isOpen())
     {

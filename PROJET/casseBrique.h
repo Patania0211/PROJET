@@ -27,12 +27,16 @@ public:
 
 	void Init();
 	void Update(sf::RenderWindow& window, int xDir);
+
+	void ClampRight();
 	void Move(int xDir);
 
 	sf::RectangleShape GetRect();
 	sf::FloatRect GetCollider();
 	float GetX();
 	float GetY();
+
+	Position* paddlePosition;
 
 private:
 
@@ -41,7 +45,6 @@ private:
 
 	Size* paddleSize;
 	Velocity* paddleVelocity;
-	Position* paddlePosition;
 	Drawable* paddleDrawing;
 
 	sf::RectangleShape paddle;
@@ -56,7 +59,7 @@ public:
 
 	Ball() 
 	{
-		ballComponent.AddComponent(Velocity{ BALL_DEFAULT_VELOCITY, BALL_DEFAULT_VELOCITY }, "Velocity");
+		ballComponent.AddComponent(Velocity{ BALL_DEFAULT_VELOCITY_X, BALL_DEFAULT_VELOCITY_Y }, "Velocity");
 
 		ballComponent.AddComponent(Position{ BALL_DEFAULT_X , BALL_DEFAULT_Y }, "Position");
 
@@ -72,7 +75,9 @@ public:
 
 	void Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window);
 
-	void HandleCollisions(Paddle& paddle);
+	void Bounce(sf::FloatRect paddleBounds);
+
+	void Bounce(Paddle& paddle);
 
 
 private:
@@ -87,4 +92,38 @@ private:
 	Velocity* ballVelocity;
 	Position* ballPosition;
 	Drawable* ballDrawing;
+};
+
+
+class Brick : public Entity
+{
+public:
+	ComponentManager<Component> brickComponent;
+
+	Brick()
+	{
+		brickComponent.AddComponent(Position{ PADDLE_DEFAULT_X , PADDLE_DEFAULT_Y }, "Position");
+
+		brickComponent.AddComponent(Size{ PADDLE_WIDTH,PADDLE_HEIGHT }, "Size");
+
+		brickComponent.AddComponent(Drawable{ isDrawn }, "Drawable");
+
+	}
+
+	void Init();
+	void Update(sf::RenderWindow& window);
+
+
+private:
+
+	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
+	bool isDrawn;
+
+	Size* brickSize;
+	Velocity* brickVelocity;
+	Drawable* brickDrawing;
+	Position* position;
+
+	sf::RectangleShape brick;
+	sf::FloatRect collider;
 };

@@ -23,11 +23,6 @@ public:
 
     }
 
-    void Invert(float& dx, float dy)
-    {
-        dy *= -1;
-        dx *= -1;
-    }
 };
 
 class Position : public Component {
@@ -50,12 +45,12 @@ public:
             x = WINDOW_WIDTH - padding;
             dx *= -1;
         }
-        else if (x - padding <= 0)
+        else if (x <= 0)
         {
             x = padding;
             dx *= -1;
         }
-
+         
         if (y + padding >= WINDOW_HEIGHT)
         {
             y = WINDOW_HEIGHT - padding;
@@ -70,6 +65,7 @@ public:
 
     bool DetectCollisions(sf::FloatRect selfCollider, sf::FloatRect otherCollider) 
     {
+
           return selfCollider.intersects(otherCollider);
     }
 };
@@ -113,4 +109,10 @@ public:
         std::cout << "Drawable: (" << isDrawn << ")\n";
 
     }
+};
+
+class Life 
+{
+    float Health;
+    bool IsAlive;
 };
