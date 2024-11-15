@@ -133,11 +133,35 @@ void Ball::Init()
 	ball.setRadius(BALL_RADIUS);
 
 }
-
 void Ball::Move(float deltaTime)
 {
 	ballPosition->x += ballVelocity->dx * deltaTime;
 	ballPosition->y += ballVelocity->dy * deltaTime;
+}
+
+Position* Ball::GetPosition()
+{
+	Position* pos = ballPosition;
+	if (pos == nullptr)
+	{
+		std::cout << "Position component is NULL" << std::endl;
+	}
+	return pos;
+}
+
+void Ball::Reset()
+{
+	// Reset the ball's position to the initial position
+	ballPosition->x = 0;
+	ballPosition->y = 0;
+
+	// Reset the ball's velocity to its initial velocity
+	ballVelocity->dx = BALL_DEFAULT_VELOCITY_X;
+	ballVelocity->dy = BALL_DEFAULT_VELOCITY_Y;
+
+	// Optionally, you can change the ball color or perform any additional reset behavior
+	ball.setFillColor(sf::Color::Red);
+
 }
 
 void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray)
@@ -158,7 +182,7 @@ void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std
 			brick.isDestroyed = true;
 
 			// Bounce the ball off the brick
-			Bounce(brick.brickRect.getGlobalBounds());
+			BrickBounce(brick.brickRect.getGlobalBounds());
 		}
 	}
 
@@ -197,7 +221,29 @@ void Ball::Bounce(sf::FloatRect paddleBounds)
 		}
 	}
 }
+void Ball::BrickBounce(sf::FloatRect brickBounds) 
+{
+	sf::FloatRect ballBounds(ballPosition->x, ballPosition->y, BALL_RADIUS * 2, BALL_RADIUS * 2);
 
+	// Check for vertical (top/bottom) collision
+	if (ballBounds.top + ballBounds.height <= brickBounds.top + 10)  // Ball hits the top of the brick
+	{
+		ballVelocity->dy = -abs(ballVelocity->dy);  // Invert the Y-velocity (bounce up)
+	}
+	else if (ballBounds.top >= brickBounds.top + brickBounds.height - 10)  // Ball hits the bottom of the brick
+	{
+		ballVelocity->dy = abs(ballVelocity->dy);  // Invert the Y-velocity (bounce down)
+	}
+	// Check for horizontal (left/right) collision
+	else if (ballBounds.left + ballBounds.width <= brickBounds.left + 10)  // Ball hits the left side of the brick
+	{
+		ballVelocity->dx = -abs(ballVelocity->dx);  // Invert the X-velocity (bounce left)
+	}
+	else if (ballBounds.left >= brickBounds.left + brickBounds.width - 10)  // Ball hits the right side of the brick
+	{
+		ballVelocity->dx = abs(ballVelocity->dx);  // Invert the X-velocity (bounce right)
+	}
+}
 
 
 void Brick::Init() 
@@ -286,6 +332,8 @@ void Game::Init()
 	brick.Init();
 }
 
+
+
 void Game::Update(sf::RenderWindow& window, float deltaTime)
 {
 	paddle.Update(window, sf::Keyboard::isKeyPressed(sf::Keyboard::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Q));
@@ -294,7 +342,10 @@ void Game::Update(sf::RenderWindow& window, float deltaTime)
 	// Remove destroyed bricks
 	brickArray.erase(std::remove_if(brickArray.begin(), brickArray.end(),
 		[](const Brick& brick) { return brick.isDestroyed; }), brickArray.end());
-
+	if (ball.GetPosition()->y >= WINDOW_HEIGHT)
+	{
+		ball.Reset();  // Reset the ball to its starting position
+	}
 	// Draw remaining bricks
 	for (auto& brick : brickArray)
 	{

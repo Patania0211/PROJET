@@ -78,12 +78,15 @@ public:
 
 	void Move(float deltaTime);
 
+	Position* GetPosition();
+
+	void Reset();
+
 	void Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray);
 
 	void Bounce(sf::FloatRect paddleBounds);
 
-	void Bounce(Paddle& paddle);
-
+	void BrickBounce(sf::FloatRect bricksBounds);
 
 private:
 	//sf::CircleShape ball;
@@ -152,7 +155,6 @@ public:
 	}
 		;
 	void Init();
-	void Reset(Paddle paddle, std::vector<Paddle>& test);
 
 	void Update(sf::RenderWindow& window, float deltaTime);
 
