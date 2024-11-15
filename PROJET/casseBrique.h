@@ -8,6 +8,8 @@
 #include "components.h"
 #include "constants.h"
 
+class Brick;
+
 class Paddle : public Entity
 {
 public:
@@ -76,7 +78,7 @@ public:
 
 	void Move(float deltaTime);
 
-	void Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window);
+	void Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray);
 
 	void Bounce(sf::FloatRect paddleBounds);
 
@@ -98,10 +100,13 @@ private:
 
 class Brick
 {
+
 public:
+
 	ComponentManager<Brick> brickComponent;
-	
-	std::vector<Brick> brickArray;
+	sf::RectangleShape brickRect;
+	bool isDestroyed = false;
+
 	Brick(float x, float y) : x(x), y(y), isDrawn(true)
 	{
 		brickRect.setSize(sf::Vector2f(BRICK_WIDTH, BRICK_HEIGHT));
@@ -125,12 +130,15 @@ public:
 		brickRect.setPosition(sf::Vector2f(x, y));  // Update the rectangle position
 	}
 
+	bool CheckCollision(sf::FloatRect ballBounds)
+	{
+		// Check for intersection between ball and brick bounds
+		return brickRect.getGlobalBounds().intersects(ballBounds);
+	}
 private:
 	float x, y;
 	sf::Vector2f position;
 	sf::Color color;
-	sf::RectangleShape brickRect;
-	bool isDestroyed;
 	bool isDrawn;
 };
 

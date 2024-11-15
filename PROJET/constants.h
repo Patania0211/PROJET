@@ -23,18 +23,6 @@
 #define MAX_ENTITIES 700
 
 
-//#define BRICKS_ROW 5
-//#define BRICKS_COL 10
-//
-//#define BRICK_WIDTH 60
-//#define BRICK_HEIGHT 20
-//#define BRICK_PADDING 20
-//
-//#define BRICK_GRID_OFFSET 175
-//
-//#define BRICK_OFFSET_X 45
-//#define BRICK_OFFSET_Y 40
-
 #define BRICK_OFFSET_Y (WINDOW_HEIGHT * 0.01f)
 // Brick settings
 #define BRICK_WIDTH (WINDOW_WIDTH * 0.08f)  // 8% of screen width

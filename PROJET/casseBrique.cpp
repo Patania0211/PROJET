@@ -140,20 +140,30 @@ void Ball::Move(float deltaTime)
 	ballPosition->y += ballVelocity->dy * deltaTime;
 }
 
-void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window)
+void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray)
 {
-
 	Move(deltaTime);
-	ballPosition->RectCollisions(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS/2);
+	ballPosition->RectCollisions(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS / 2);
 	ballDrawing->Draw(ball, ballPosition->x, ballPosition->y, sf::Color::Red, window);
 
-
-	//ballPosition->Print();
+	// Ball-paddle collision
 	Bounce(paddle.GetCollider());
 
-	ballBounds = ball.getGlobalBounds();
-	return;
+	// Check for collisions with bricks
+	for (auto& brick : brickArray)
+	{
+		if (!brick.isDestroyed && brick.CheckCollision(ball.getGlobalBounds()))
+		{
+			// Mark the brick as destroyed
+			brick.isDestroyed = true;
 
+			// Bounce the ball off the brick
+			Bounce(brick.brickRect.getGlobalBounds());
+		}
+	}
+
+	ballBounds = ball.getGlobalBounds();  // Update ball bounds
+	return;
 }
 
 void Ball::Bounce(sf::FloatRect paddleBounds) 
@@ -239,21 +249,6 @@ void Brick::Init()
 }
 void Brick::Grid(std::vector<Brick>& brickArray)
 {
-	//for (int x = 0; x < BRICKS_ROW; x++)
-	//{
-	//	for (int y = 0; y < BRICKS_COL; y++)
-	//	{
-	//		// Create brick at position (x, y) with offset
-	//		Brick brick(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
-
-	//		// Optionally, you can use SetPosition to adjust the brick position if needed
-	//		brick.SetPosition(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
-
-	//		// Add the brick to the vector
-	//		ballArray.emplace_back(std::move(brick));
-	//	}
-	//}
-
 	for (int row = 0; row < BRICKS_ROW; ++row)  // Loop over rows
 	{
 		for (int col = 0; col < BRICKS_COL; ++col)  // Loop over columns
@@ -269,20 +264,15 @@ void Brick::Grid(std::vector<Brick>& brickArray)
 			brickArray.push_back(std::move(brick));
 		}
 	}
-	
 }
 
-void Brick::Update(sf::RenderWindow& window, std::vector<Brick>& ballArray)
+void Brick::Update(sf::RenderWindow& window, std::vector<Brick>& brickArray)
 {
-	if (!isDrawn)  // Only update if drawing is enabled
+	if (!isDestroyed)  // Only update if the brick is not destroyed
 	{
-		return;
+		window.draw(brickRect);
 	}
-
-
-	window.draw(brickRect);
 }
-
 
 void Game::Init() 
 {
@@ -296,13 +286,19 @@ void Game::Init()
 	brick.Init();
 }
 
-void Game::Update(sf::RenderWindow& window, float deltaTime) 
+void Game::Update(sf::RenderWindow& window, float deltaTime)
 {
 	paddle.Update(window, sf::Keyboard::isKeyPressed(sf::Keyboard::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Q));
-	ball.Update(deltaTime, paddle, window);
+	ball.Update(deltaTime, paddle, window, brickArray);
 
+	// Remove destroyed bricks
+	brickArray.erase(std::remove_if(brickArray.begin(), brickArray.end(),
+		[](const Brick& brick) { return brick.isDestroyed; }), brickArray.end());
+
+	// Draw remaining bricks
 	for (auto& brick : brickArray)
 	{
-		brick.Update(window, brickArray); // Draw each brick
+		brick.Update(window, brickArray);
 	}
 }
+
