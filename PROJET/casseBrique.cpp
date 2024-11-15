@@ -237,38 +237,38 @@ void Brick::Init()
 
 
 }
-void Brick::Grid(std::vector<Brick>& ballArray)
+void Brick::Grid(std::vector<Brick>& brickArray)
 {
-	for (int x = 0; x < BRICKS_ROW; x++)
-	{
-		for (int y = 0; y < BRICKS_COL; y++)
-		{
-			// Create brick at position (x, y) with offset
-			Brick brick(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
-
-			// Optionally, you can use SetPosition to adjust the brick position if needed
-			brick.SetPosition(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
-
-			// Add the brick to the vector
-			ballArray.emplace_back(std::move(brick));
-		}
-	}
-
-	//for (int row = 0; row < BRICKS_ROW; ++row)  // Loop over rows
+	//for (int x = 0; x < BRICKS_ROW; x++)
 	//{
-	//	for (int col = 0; col < BRICKS_COL; ++col)  // Loop over columns
+	//	for (int y = 0; y < BRICKS_COL; y++)
 	//	{
-	//		// Calculate the position based on the row and column
-	//		float xPos = col * (BRICK_WIDTH + BRICK_OFFSET_X) + BRICK_GRID_OFFSET;
-	//		float yPos = row * (BRICK_HEIGHT + BRICK_OFFSET_Y) + BRICK_PADDING;
+	//		// Create brick at position (x, y) with offset
+	//		Brick brick(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
 
-	//		// Create a brick and set its position
-	//		Brick brick(xPos, yPos);
+	//		// Optionally, you can use SetPosition to adjust the brick position if needed
+	//		brick.SetPosition(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
 
-	//		// Add the brick to the brick array
-	//		brickArray.push_back(std::move(brick));
+	//		// Add the brick to the vector
+	//		ballArray.emplace_back(std::move(brick));
 	//	}
 	//}
+
+	for (int row = 0; row < BRICKS_ROW; ++row)  // Loop over rows
+	{
+		for (int col = 0; col < BRICKS_COL; ++col)  // Loop over columns
+		{
+			// Calculate the position based on the row and column
+			float xPos = col * (BRICK_WIDTH + BRICK_OFFSET_X) + BRICK_GRID_OFFSET;
+			float yPos = row * (BRICK_HEIGHT + BRICK_OFFSET_Y) + BRICK_PADDING;
+
+			// Create a brick and set its position
+			Brick brick(xPos, yPos);
+
+			// Add the brick to the brick array
+			brickArray.push_back(std::move(brick));
+		}
+	}
 	
 }
 
@@ -278,6 +278,7 @@ void Brick::Update(sf::RenderWindow& window, std::vector<Brick>& ballArray)
 	{
 		return;
 	}
+
 
 	window.draw(brickRect);
 }
