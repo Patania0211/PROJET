@@ -31,6 +31,7 @@ public:
 	void ClampRight();
 	void Move(int xDir);
 
+	Position* GetPosition();
 	sf::RectangleShape GetRect();
 	sf::FloatRect GetCollider();
 	float GetX();
@@ -40,7 +41,7 @@ public:
 
 private:
 
-	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
+	//std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
 	bool isDrawn;
 
 	Size* paddleSize;
@@ -56,6 +57,8 @@ class Ball : public Entity
 {
 public:
 	ComponentManager<Component> ballComponent;
+	Position* ballPosition;
+
 
 	Ball() 
 	{
@@ -83,47 +86,74 @@ public:
 private:
 	//sf::CircleShape ball;
 	bool isDrawn;
-	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
+	//std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
 	
 	sf::FloatRect ballBounds;
 	sf::CircleShape ball;
 
 	Size* ballSize;
 	Velocity* ballVelocity;
-	Position* ballPosition;
 	Drawable* ballDrawing;
 };
 
-
-class Brick : public Entity
+class Brick
 {
 public:
-	ComponentManager<Component> brickComponent;
-
-	Brick()
+	ComponentManager<Brick> brickComponent;
+	
+	std::vector<Brick> brickArray;
+	Brick(float x, float y) : x(x), y(y), isDrawn(true)
 	{
-		brickComponent.AddComponent(Position{ PADDLE_DEFAULT_X , PADDLE_DEFAULT_Y }, "Position");
-
-		brickComponent.AddComponent(Size{ PADDLE_WIDTH,PADDLE_HEIGHT }, "Size");
-
-		brickComponent.AddComponent(Drawable{ isDrawn }, "Drawable");
-
+		brickRect.setSize(sf::Vector2f(BRICK_WIDTH, BRICK_HEIGHT));
+		brickRect.setPosition(x, y);
+		brickRect.setFillColor(sf::Color::Green);  // Set the color of the brick
 	}
 
 	void Init();
-	void Update(sf::RenderWindow& window);
 
+
+	void Draw();
+	void Grid(std::vector<Brick>& ballArray);
+
+	void Update(sf::RenderWindow& widnow, std::vector<Brick>& ballArray);
+
+
+	void SetPosition(float newX, float newY)
+	{
+		x = newX;
+		y = newY;
+		brickRect.setPosition(sf::Vector2f(x, y));  // Update the rectangle position
+	}
+
+private:
+	float x, y;
+	sf::Vector2f position;
+	sf::Color color;
+	sf::RectangleShape brickRect;
+	bool isDestroyed;
+	bool isDrawn;
+};
+
+class Game 
+{
+public:
+	Game() : brick(0.f, 0.f) // Initialize brick with default x, y values
+	{
+		paddle = Paddle();
+		ball = Ball();
+	}
+		;
+	void Init();
+	void Reset(Paddle paddle, std::vector<Paddle>& test);
+
+	void Update(sf::RenderWindow& window, float deltaTime);
 
 private:
 
-	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
-	bool isDrawn;
+	std::vector<Brick> brickArray{};
 
-	Size* brickSize;
-	Velocity* brickVelocity;
-	Drawable* brickDrawing;
-	Position* position;
+	Paddle paddle;
+	Ball ball;
+	Brick brick;
 
-	sf::RectangleShape brick;
-	sf::FloatRect collider;
 };

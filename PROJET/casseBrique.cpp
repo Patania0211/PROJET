@@ -77,6 +77,10 @@ sf::FloatRect Paddle::GetCollider()
 	return sf::FloatRect(paddle.getGlobalBounds());
 }
 
+Position* Paddle::GetPosition()
+{
+	return dynamic_cast<Position*>(paddleComponent.GetComponent<Position>("Position"));
+}
 
 
 void Ball::Init() 
@@ -141,7 +145,7 @@ void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window)
 
 	Move(deltaTime);
 	ballPosition->RectCollisions(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS/2);
-	ballDrawing->Draw(ball, ballPosition->x, ballPosition->y, sf::Color::Magenta, window);
+	ballDrawing->Draw(ball, ballPosition->x, ballPosition->y, sf::Color::Red, window);
 
 
 	//ballPosition->Print();
@@ -185,3 +189,119 @@ void Ball::Bounce(sf::FloatRect paddleBounds)
 }
 
 
+
+void Brick::Init() 
+{
+	//Component* brickSizeBase = brickComponent.GetComponent<Size>("Size");
+	//brickSize = dynamic_cast<Size*>(brickSizeBase);
+
+	///*Component* brickPositionBase = brickComponent.GetComponent<Position>("Position");
+	//brickPosition = dynamic_cast<Position*>(brickPositionBase);
+
+	//Component* brickDrawingBase = brickComponent.GetComponent<Drawable>("Drawable");
+	//brickDrawing = dynamic_cast<Drawable*>(brickDrawingBase);*/
+
+	//std::shared_ptr<Position> brickPositionBase = brickComponent.GetComponent<Position>("Position");
+	//brickPosition = brickPositionBase.get();  // No need to dynamic_cast if you are using shared_ptr
+
+	//std::shared_ptr<Drawable> brickDrawingBase = brickComponent.GetComponent<Drawable>("Drawable");
+	//brickDrawing = brickDrawingBase.get();  // No need to dynamic_cast
+
+
+	//if (!brickSize)
+	//{
+	//	std::cout << "NO paddle size component" << std::endl;
+	//	return;
+	//}
+
+	//if (!brickPosition)
+	//{
+	//	std::cout << "NO paddle position component" << std::endl;
+	//	return;
+	//}
+
+
+	//if (!brickDrawing)
+	//{
+	//	std::cout << "NO paddle drawable component" << std::endl;
+	//	return;
+	//}
+
+	//isDrawn = true;
+
+	//brickDrawing->isDrawn = true;
+
+	brickRect.setSize((sf::Vector2f(BRICK_WIDTH, BRICK_HEIGHT)));
+	brickRect.setFillColor(sf::Color::Green);
+	isDrawn = true;
+
+
+}
+void Brick::Grid(std::vector<Brick>& ballArray)
+{
+	for (int x = 0; x < BRICKS_ROW; x++)
+	{
+		for (int y = 0; y < BRICKS_COL; y++)
+		{
+			// Create brick at position (x, y) with offset
+			Brick brick(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
+
+			// Optionally, you can use SetPosition to adjust the brick position if needed
+			brick.SetPosition(x * BRICK_OFFSET_X + BRICK_GRID_OFFSET, y * BRICK_OFFSET_Y + BRICK_PADDING);
+
+			// Add the brick to the vector
+			ballArray.emplace_back(std::move(brick));
+		}
+	}
+
+	//for (int row = 0; row < BRICKS_ROW; ++row)  // Loop over rows
+	//{
+	//	for (int col = 0; col < BRICKS_COL; ++col)  // Loop over columns
+	//	{
+	//		// Calculate the position based on the row and column
+	//		float xPos = col * (BRICK_WIDTH + BRICK_OFFSET_X) + BRICK_GRID_OFFSET;
+	//		float yPos = row * (BRICK_HEIGHT + BRICK_OFFSET_Y) + BRICK_PADDING;
+
+	//		// Create a brick and set its position
+	//		Brick brick(xPos, yPos);
+
+	//		// Add the brick to the brick array
+	//		brickArray.push_back(std::move(brick));
+	//	}
+	//}
+	
+}
+
+void Brick::Update(sf::RenderWindow& window, std::vector<Brick>& ballArray)
+{
+	if (!isDrawn)  // Only update if drawing is enabled
+	{
+		return;
+	}
+
+	window.draw(brickRect);
+}
+
+
+void Game::Init() 
+{
+
+
+	brick.Grid(brickArray);
+
+
+	paddle.Init();
+	ball.Init();
+	brick.Init();
+}
+
+void Game::Update(sf::RenderWindow& window, float deltaTime) 
+{
+	paddle.Update(window, sf::Keyboard::isKeyPressed(sf::Keyboard::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Q));
+	ball.Update(deltaTime, paddle, window);
+
+	for (auto& brick : brickArray)
+	{
+		brick.Update(window, brickArray); // Draw each brick
+	}
+}

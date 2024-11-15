@@ -7,6 +7,7 @@
 class Component {
 public:
     virtual ~Component() = default;  // Virtual destructor for polymorphism
+
     virtual void Print() const = 0;  // Pure virtual function for printing component data
 };
 
@@ -109,10 +110,4 @@ public:
         std::cout << "Drawable: (" << isDrawn << ")\n";
 
     }
-};
-
-class Life 
-{
-    float Health;
-    bool IsAlive;
 };

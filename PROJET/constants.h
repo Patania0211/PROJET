@@ -23,6 +23,20 @@
 #define MAX_ENTITIES 700
 
 
+#define BRICK_WIDTH 80
+#define BRICK_HEIGHT 20
+#define BRICK_OFFSET_X 10
+#define BRICK_OFFSET_Y 5
+#define BRICK_GRID_OFFSET 50  // Space between grid and screen edge
+#define BRICK_PADDING 20
+#define BRICKS_ROW 5
+#define BRICKS_COL 10
+
+
+
+
+
+
 
 
 

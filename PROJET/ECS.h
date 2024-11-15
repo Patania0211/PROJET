@@ -71,5 +71,10 @@ public:
 	}
 
 private:
-	std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
+	//std::vector<std::pair<std::string, std::unique_ptr<Component>>> componentArr;
+	std::vector<std::pair<std::string, std::shared_ptr<Component>>> componentArr;
+
+	//std::vector<std::shared_ptr<Component>> componentArr;
+
+
 };
