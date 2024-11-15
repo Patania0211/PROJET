@@ -151,20 +151,15 @@ Position* Ball::GetPosition()
 
 void Ball::Reset()
 {
-	// Reset the ball's position to the initial position
-	ballPosition->x = 0;
-	ballPosition->y = 0;
-
-	// Reset the ball's velocity to its initial velocity
+	ballPosition->x = WINDOW_WIDTH / 2 - BALL_RADIUS;
+	ballPosition->y = WINDOW_HEIGHT / 2 - BALL_RADIUS;
 	ballVelocity->dx = BALL_DEFAULT_VELOCITY_X;
 	ballVelocity->dy = BALL_DEFAULT_VELOCITY_Y;
-
-	// Optionally, you can change the ball color or perform any additional reset behavior
 	ball.setFillColor(sf::Color::Red);
 
 }
 
-void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray)
+void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray, int& score)
 {
 	Move(deltaTime);
 	ballPosition->RectCollisions(ballVelocity->dx, ballVelocity->dy, BALL_RADIUS / 2);
@@ -180,6 +175,8 @@ void Ball::Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std
 		{
 			// Mark the brick as destroyed
 			brick.isDestroyed = true;
+
+			score += 10;
 
 			// Bounce the ball off the brick
 			BrickBounce(brick.brickRect.getGlobalBounds());
@@ -322,10 +319,21 @@ void Brick::Update(sf::RenderWindow& window, std::vector<Brick>& brickArray)
 
 void Game::Init() 
 {
+	//Inits
+
+	//if (!font.loadFromFile("../ressources/minecraft_font.ttf"))  // Replace with your font file path
+	//{
+	//	std::cout << "Failed to load font!" << std::endl;
+	//	return;
+	//}
+
+	//scoreText.setFont(font);
+	//scoreText.setCharacterSize(30);  // Set the text size
+	//scoreText.setFillColor(sf::Color::White);  // Set the text color
+	//scoreText.setPosition(10.f, 10.f);  // Position the score at the top left corner
 
 
 	brick.Grid(brickArray);
-
 
 	paddle.Init();
 	ball.Init();
@@ -337,7 +345,7 @@ void Game::Init()
 void Game::Update(sf::RenderWindow& window, float deltaTime)
 {
 	paddle.Update(window, sf::Keyboard::isKeyPressed(sf::Keyboard::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Q));
-	ball.Update(deltaTime, paddle, window, brickArray);
+	ball.Update(deltaTime, paddle, window, brickArray, score);
 
 	// Remove destroyed bricks
 	brickArray.erase(std::remove_if(brickArray.begin(), brickArray.end(),
@@ -351,5 +359,10 @@ void Game::Update(sf::RenderWindow& window, float deltaTime)
 	{
 		brick.Update(window, brickArray);
 	}
+	//std::cout << "Curent" + score << std::endl;
+	//scoreText.setString("Score: " + std::to_string(score));
+
+	// Draw the score
+	//window.draw(scoreText);
 }
 

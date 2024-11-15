@@ -82,7 +82,7 @@ public:
 
 	void Reset();
 
-	void Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray);
+	void Update(float deltaTime, Paddle& paddle, sf::RenderWindow& window, std::vector<Brick>& brickArray, int& score);
 
 	void Bounce(sf::FloatRect paddleBounds);
 
@@ -161,9 +161,13 @@ public:
 private:
 
 	std::vector<Brick> brickArray{};
-
 	Paddle paddle;
 	Ball ball;
 	Brick brick;
+
+
+	int score;
+	sf::Font font;
+	sf::Text scoreText;
 
 };
